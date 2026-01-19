@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+// Import for Android features
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Hide system bars for immersive experience
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
 
@@ -91,19 +95,38 @@ class _ShowroomPageState extends State<ShowroomPage> {
         ),
       )
       ..loadRequest(Uri.parse(_honda3dUrl));
+      
+    // Android-specific configuration
+    if (_controller.platform is AndroidWebViewController) {
+      final AndroidWebViewController androidController =
+          _controller.platform as AndroidWebViewController;
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+      androidController.setAllowContentAccess(true);
+      androidController.setAllowFileAccess(true);
+    }
   }
 
   // This function maps the Remote OK button to the HTML button click
-  void _handleRemoteClick() {
+void _handleRemoteClick() {
+    debugPrint("Remote OK Pressed - Triggering JS");
     _controller.runJavaScript("""
       (function() {
-        var kioskBtn = document.getElementById('testBtnKiosk');
-        if (kioskBtn) {
-          kioskBtn.focus();  // Visually highlights the button
-          kioskBtn.click();  // Triggers the Honda Kiosk mode
-          console.log('Kiosk Started via Remote');
+        var btn = document.getElementById('testBtnKiosk');
+        if (btn) {
+          // 1. Visually focus
+          btn.focus();
+
+          // 2. Create a simulated Mouse/Touch event (More reliable than .click())
+          var event = new MouseEvent('click', {
+            'view': window,
+            'bubbles': true,
+            'cancelable': true
+          });
+          btn.dispatchEvent(event);
+
+          console.log('Kiosk Button Dispatched successfully');
         } else {
-          console.error('Kiosk button not found in DOM');
+          console.error('Button not found');
         }
       })();
     """);
@@ -123,9 +146,7 @@ class _ShowroomPageState extends State<ShowroomPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Padding(
-             padding: const EdgeInsets.all(20.0), // Overscan padding
-             child: CallbackShortcuts(
+          CallbackShortcuts(
               bindings: {
                 // Detect physical "Select/OK" or "Enter" keys from the remote
                 const SingleActivator(LogicalKeyboardKey.select): _handleRemoteClick,
@@ -137,7 +158,6 @@ class _ShowroomPageState extends State<ShowroomPage> {
                 child: WebViewWidget(controller: _controller),
               ),
             ),
-          ),
           if (_isLoading)
             const Center(
               child: CircularProgressIndicator(
