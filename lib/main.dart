@@ -42,7 +42,7 @@ class _ShowroomPageState extends State<ShowroomPage> {
   bool _isLoading = true;
   
   // Constants
-  static const String _honda3dUrl = 'https://honda-dealer.artec.co.in/honda-amaze/#/car/stream/amaze';
+  static const String _honda3dUrl = 'https://nissan.artec.co.in/nissan-magnite/#/car/stream/magnite';
   // Desktop User Agent for better TV compatibility
   static const String _userAgent = 
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
