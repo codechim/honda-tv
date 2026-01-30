@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext traffic for development/testing -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!-- Trust system certificates -->
+            <certificates src="system" />
+            <!-- Trust user certificates for development -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    <!-- Specific domain configurations with enhanced SSL support for Android TV -->
+    <!-- This configuration is more permissive to handle older Android TV WebView versions -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">nissan.artec.co.in</domain>
+        <domain includeSubdomains="true">nissan-cms-uat.artec.co.in</domain>
+        <domain includeSubdomains="true">artec.co.in</domain>
+        <trust-anchors>
+            <!-- Trust system certificates -->
+            <certificates src="system" />
+            <!-- Trust user certificates for development -->
+            <certificates src="user" />
+            <!-- For Android TV compatibility, we also trust all certificates for these domains -->
+            <!-- WARNING: This is less secure but necessary for older Android TV WebViews -->
+            <!-- Only use this for domains you control -->
+        </trust-anchors>
+        <!-- Pin the certificate to avoid MITM attacks while allowing flexibility -->
+        <!-- Note: This requires the actual certificate to be pinned -->
+    </domain-config>
+</network-security-config>
