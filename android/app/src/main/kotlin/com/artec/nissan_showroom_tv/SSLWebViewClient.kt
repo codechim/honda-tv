@@ -1,4 +1,4 @@
-package com.example.honda_showroom_tv
+package com.artec.nissan_showroom_tv
 
 import android.net.http.SslError
 import android.webkit.SslErrorHandler
